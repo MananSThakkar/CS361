@@ -63,7 +63,7 @@ public class TokenStream {
 					}
 				// look for <cr>, <lf>, <ff>
 
-			} else {
+			} /*else {
 				// A slash followed by a backslash is an AND operator (/\).
 				// 92 is \, the number is used since \ causes an error.
 				if (nextChar == 92) {
@@ -75,6 +75,8 @@ public class TokenStream {
 				t.setType("Operator");
 				return t;
 			}
+				*/
+			
 		}
 
 		// Then check for an operator; recover 2-character operators
@@ -137,7 +139,7 @@ public class TokenStream {
 		}
 
 		if (isDigit(nextChar)) { // check for integers
-			t.setType("Integer-Literal");
+			t.setType("Literal");
 			while (isDigit(nextChar)) {
 				t.setValue(t.getValue() + nextChar);
 				nextChar = readChar();

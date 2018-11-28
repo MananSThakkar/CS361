@@ -7,7 +7,7 @@ package SCANNER_PARSER;
  */
 public class ScannerDemo {
 
-	private static String file1 = "prog2.jay";
+	private static String file1 = "TEST.jay";
 	private static int counter = 1;																						
 
 	public static void main(String args[]) {
