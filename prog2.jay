@@ -1,7 +1,7 @@
-// No lexical errors. No syntactical errors.
+
 void main () {
 // compute result = the 8th Fibonacci number
-   int n, fib0, fib1, j , k;
+   int n, fib0, fib1;
    int temp, result;
    n = 8;
    fib0 = 0;
@@ -11,10 +11,6 @@ void main () {
       fib0 = fib1;
       fib1 = fib0 + temp;
       n = n - 1;
-      
-      j==2;
-      k= 1 / 2;
-      
    }
    result = fib0;
 }

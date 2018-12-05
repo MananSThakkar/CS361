@@ -1,6 +1,5 @@
 package SCANNER_PARSER;
 
-
 // ConcreteSyntax.java
 
 // Implementation of the Recursive Descent Parser algorithm
@@ -11,6 +10,8 @@ package SCANNER_PARSER;
 // This code DOES NOT implement a parser for JAY. You have to complete
 // the code and also make sure it implements a parser for JAY - not something
 // else.
+
+//
 
 public class ConcreteSyntax {
 
@@ -27,11 +28,21 @@ public class ConcreteSyntax {
 
 	// Method that prints a syntax error message
 	private String SyntaxError(String tok) {
-		String s = "Syntax error - Expecting: " + tok + " But saw: "
-				+ token.getType() + " = " + token.getValue();
-		System.out.println(s);
-		return s;
-		// System.exit(0);
+		if(token.getType().equals("Other")){
+			String l = "Lexical error - Expecting: " + tok + " But saw: "
+			+ token.getType() + " = " + token.getValue();
+			
+			System.out.println(l);
+			return l;
+		}	
+		else{ String s = "Syntax error - Expecting: " + tok + " But saw: "
+			  + token.getType() + " = " + token.getValue();
+		
+			  System.out.println(s);
+			  return s;
+		}
+		
+		//System.exit(0);
 	}
 
 	// Match a string with the value of a token. If no problem, go to the next
@@ -47,13 +58,15 @@ public class ConcreteSyntax {
 
 	public Program program() {
 		// Program --> void main ( ) '{' Declarations Statements '}'
-		String[] header = { "main", "(", ")" };
+		String[] header = {"void", "main", "(", ")" };
 		Program p = new Program();
-		for (int i = 0; i < header.length; i++)
+		for (int i = 0; i < header.length; i++){
 			// bypass "void main ( )"
 			match(header[i]);
+		}	
 		match("{");
 		p.decpart = declarations();
+		
 		p.body = statements();
 		match("}");
 		return p;
@@ -63,7 +76,7 @@ public class ConcreteSyntax {
 		// Declarations --> { Declaration }*
 		Declarations ds = new Declarations();
 		while (token.getValue().equals("int")
-				|| token.getValue().equals("bool")) {
+				|| token.getValue().equals("boolean")) {
 			declaration(ds);
 		}
 		return ds;
@@ -81,7 +94,7 @@ public class ConcreteSyntax {
 		Type t = null;
 		if (token.getValue().equals("int"))
 			t = new Type(token.getValue());
-		else if (token.getValue().equals("bool"))
+		else if (token.getValue().equals("boolean"))
 			t = new Type(token.getValue());
 		else
 			throw new RuntimeException(SyntaxError("int | boolean"));
@@ -126,11 +139,15 @@ public class ConcreteSyntax {
 			match("}");
 		} else if (token.getValue().equals("if")) // IfStatement
 			s = ifStatement();
+		
 		else if (token.getValue().equals("while")) {
 			// WhileStatement
 			// TO BE COMPLETED
+			s = whileStatement();
+			
 		} else if (token.getType().equals("Identifier")) { // Assignment
 			// TO BE COMPLETED
+			s = assignment();
 		} else
 			throw new RuntimeException(SyntaxError("Statement"));
 		return s;
@@ -150,6 +167,15 @@ public class ConcreteSyntax {
 		Assignment a = new Assignment();
 		if (token.getType().equals("Identifier")) {
 			// TO BE COMPLETED
+			a.target = new Variable();
+			a.target.id = token.getValue();			
+			token = input.nextToken();
+			if(token.getValue().equals("=")){
+				token = input.nextToken();
+				Expression e = expression();
+				a.source = e;
+			}	
+						
 		} else
 			throw new RuntimeException(SyntaxError("Identifier"));
 		return a;
@@ -179,6 +205,10 @@ public class ConcreteSyntax {
 		while (token.getValue().equals("&&")) {
 			b = new Binary();
 			// TO BE COMPLETED
+			b.term1 = e;
+			b.op = new Operator(token.getValue());
+			token = input.nextToken();
+			b.term2 = relation();
 			e = b;
 		}
 		return e;
@@ -196,6 +226,10 @@ public class ConcreteSyntax {
 				|| token.getValue().equals("<>")) {
 			b = new Binary();
 			// TO BE COMPLETED
+			b.term1 = e;
+			b.op = new Operator(token.getValue());
+			token = input.nextToken();
+			b.term2 = addition();
 			e = b;
 		}
 		return e;
@@ -225,6 +259,10 @@ public class ConcreteSyntax {
 		while (token.getValue().equals("*") || token.getValue().equals("/")) {
 			b = new Binary();
 			// TO BE COMPLETED
+			b.term1 = e;
+			b.op = new Operator(token.getValue());
+			token = input.nextToken();
+			b.term2 = negation();
 			e = b;
 		}
 		return e;
@@ -274,8 +312,26 @@ public class ConcreteSyntax {
 
 	private Conditional ifStatement() {
 		// IfStatement --> if ( Expression ) Statement { else Statement }opt
+		//TO BE COMPLETED
 		Conditional c = new Conditional();
-		// TO BE COMPLETED
+		Expression test;
+		Statement thenbranch,elsebranch;
+		
+		token = input.nextToken();
+		test = expression();
+		c.test = test;
+		token = input.nextToken();
+		thenbranch = statements();
+		c.thenbranch = thenbranch;
+		token = input.nextToken();
+		
+		
+		if(token.getValue().equals("else")){// Looks for else statement
+		token = input.nextToken();
+		elsebranch = statements();
+		c.elsebranch = elsebranch;
+		}
+		
 		return c;
 	}
 
@@ -283,6 +339,16 @@ public class ConcreteSyntax {
 		// WhileStatement --> while ( Expression ) Statement
 		Loop l = new Loop();
 		// TO BE COMPLETED
+		Expression test;
+		Statement body;
+		
+		token = input.nextToken();
+		test = expression();
+		l.test = test;
+		token = input.nextToken();
+		body = statements(); 
+		l.body = body;
+		token =input.nextToken();
 		return l;
 	}
 
